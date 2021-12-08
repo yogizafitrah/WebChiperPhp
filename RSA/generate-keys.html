@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Generate RSA Keys</title>
+        <link rel="stylesheet" href="styles/main.css" />
+    <style type="text/css">
+    a{text-decoration: none; font-size: 20px;font-family: sans-serif;padding: 14px 10px}
+    ul{padding: 14px}
+    li{list-style: none; display: inline;}
+    li a{background: #222; color:#d4d4d4;}
+    li a:hover{background: #4da4ff; color:#fff;}
+    .navi{background: #222; height: 50px}
+    </style>
+
+    <nav class="navi">
+    <ul>
+        <li><a href="../index.php">Vernam Cipher</a></li>
+        <li><a href="../vigenere.php">Vigenere Cipher</a></li>
+        <li><a href="../caesar.php">Caesar Cipher</a></li>
+        <li><a href="../DES.html">DES/3DES</a></li>
+        <li><a href="../RSA/index.html">RSA</a></li>
+    </ul>
+</nav>
+</head>
+<br>
+
+    <body>
+        <nav>
+            <a class="selected" href="generate-keys.html">Generate Keys</a>
+            <a href="encrypt-text.html">Encrypt Text</a>
+            <a href="decrypt-text.html">Decrypt Text</a>
+<!--             <a href="encrypt-file.html">Encrypt File</a>
+            <a href="decrypt-file.html">Decrypt File</a> -->
+        </nav>
+
+        <div class="page">
+            <h1>Generate RSA Keys</h1>
+
+            <div class="field">
+                <label for="public-key">RSA Public Key</label>
+                <textarea id="public-key" rows="10"></textarea>
+            </div>
+
+            <div class="field">
+                <label for="private-key">RSA Private Key</label>
+                <textarea id="private-key" rows="10"></textarea>
+            </div>
+
+            <button id="button">GENERATE KEYS</button>
+            <div id="message"></div>
+        </div>
+    </body>
+
+    <script src="scripts/encoding-helper.js"></script>
+    <script src="scripts/encryption-helper.js"></script>
+    <script>
+        (function () {
+            var publicKey = document.getElementById("public-key");
+            var privateKey = document.getElementById("private-key");
+            var button = document.getElementById("button");
+            var message = document.getElementById("message");
+
+            var success = function (keys) {
+                publicKey.value = arrayBufferToPem(keys.publicKeyBuffer, "RSA PUBLIC KEY");
+                privateKey.value = arrayBufferToPem(keys.privateKeyBuffer, "RSA PRIVATE KEY");
+                message.innerText = null;
+                button.disabled = false;
+            };
+
+            var error = function (error) {
+                message.innerText = error;
+                button.disabled = false;
+            };
+
+            var process = function () {
+                message.innerText = "Processing...";
+                button.disabled = true;
+                generateRsaKeys().then(success, error);
+            };
+
+            var warn = function () {
+                if (privateKey.value === "") return;
+                return "Are you sure? Your keys will be lost unless you've saved them.";
+            };
+
+            button.addEventListener("click", process);
+            window.onbeforeunload = warn;
+        })();
+    </script>
+</html>
